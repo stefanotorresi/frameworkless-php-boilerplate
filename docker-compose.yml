@@ -1,0 +1,46 @@
+version: '3.7'
+services:
+
+    http-proxy:
+        build:
+            context: infra/nginx
+        restart: unless-stopped
+        depends_on:
+            - app
+            - docs
+        ports:
+            - "80:80"
+
+    app:
+        build:
+            context: .
+            target: dev
+        restart: unless-stopped
+        volumes:
+            - .:/app
+        depends_on:
+            - database
+        environment:
+            - COMPOSER_CACHE_DIR=/app/var/composer
+        env_file:
+            - .env.example
+
+    docs:
+        image: swaggerapi/swagger-ui
+        volumes:
+            - ./docs/todos.openapi.yml:/app/todos.openapi.yml
+        environment:
+            - LAYOUT=BaseLayout
+            - SWAGGER_JSON=/app/todos.openapi.yml
+
+    database:
+        image: postgres:11-alpine
+        restart: unless-stopped
+        ports:
+            - "5432:5432"
+        environment:
+            LC_ALL: C.UTF-8
+            POSTGRES_USER: app
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: app
+

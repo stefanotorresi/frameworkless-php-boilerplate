@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+namespace Acme\ToDo;
+
+use Acme\ToDo\Model\ToDoDataMapper;
+
+chdir(dirname(__DIR__));
+
+require 'vendor/autoload.php';
+
+(static function($argv) {
+    $app = App::bootstrap();
+
+    $command = $argv[1] ?? '';
+
+    switch (true) {
+        case $command === 'create-schema':
+            $app->get(ToDoDataMapper::class)->initSchema();
+            echo 'Schema created', PHP_EOL;
+            break;
+        case $command === 'drop-schema':
+            $app->get(ToDoDataMapper::class)->dropSchema();
+            echo 'Schema dropped', PHP_EOL;
+            break;
+        case $command === 'prune-cache':
+            system('rm -rfv ' . App::CACHE_DIR);
+            echo 'Cache pruned', PHP_EOL;
+            break;
+        default:
+            echo
+            <<<TEXT
+            Usage: cli [command]
+            Commands:
+                create-schema   creates the database schema
+                drop-schema     drops the database schema
+                prune-cache     prunes the cache directory (var/cache)
+            TEXT, PHP_EOL;
+    }
+})($argv);

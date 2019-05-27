@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+
+  app:
+    image: ${APP_DEV_IMAGE}:${CI_COMMIT_REF_SLUG}
+
+  reverse-proxy:
+    image: ${HTTP_PROXY_IMAGE}:${CI_COMMIT_REF_SLUG}

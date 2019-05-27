@@ -1,0 +1,77 @@
+<?php declare(strict_types=1);
+
+namespace Acme\ToDo\Http\RouteHandler;
+
+use Acme\ToDo\Model\ToDo;
+use Acme\ToDo\Model\ToDoDataMapper;
+use League\Route\Http\Exception\BadRequestException;
+use League\Route\Http\Exception\NotFoundException;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
+use Zend\Diactoros\ServerRequest;
+
+class ToDoDeleteUnitTest extends TestCase
+{
+    /**
+     * @var ToDoDelete
+     */
+    private $SUT;
+
+    /**
+     * @var ToDoDataMapper & MockObject
+     */
+    private $recipeDataMapper;
+
+    protected function setUp(): void
+    {
+        $this->recipeDataMapper = $this->createMock(ToDoDataMapper::class);
+        $this->SUT = new ToDoDelete($this->recipeDataMapper);
+    }
+
+    public function testSuccess(): void
+    {
+        $item = new ToDo('foo');
+        $request = new ServerRequest();
+        $args = ['id' => Uuid::NIL];
+
+        $this->recipeDataMapper
+            ->method('find')
+            ->with($args['id'])
+            ->willReturn($item)
+        ;
+
+        $this->recipeDataMapper->expects(once())->method('delete')->with($args['id']);
+
+        $response = $this->SUT->__invoke($request, $args);
+
+        assertSame(204, $response->getStatusCode());
+    }
+
+    public function testInvalidUUID(): void
+    {
+        $request = new ServerRequest();
+        $args = ['id' => 'foo'];
+
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('Invalid UUID');
+
+        $this->SUT->__invoke($request, $args);
+    }
+
+    public function testNotFound(): void
+    {
+        $request = new ServerRequest();
+        $args = ['id' => Uuid::NIL];
+
+        $this->recipeDataMapper
+            ->method('find')
+            ->with($args['id'])
+            ->willReturn(null)
+        ;
+
+        $this->expectException(NotFoundException::class);
+
+        $this->SUT->__invoke($request, $args);
+    }
+}

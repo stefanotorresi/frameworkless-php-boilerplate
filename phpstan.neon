@@ -1,0 +1,8 @@
+parameters:
+    level: max
+    ignoreErrors:
+        - message: "#factory expects callable#"
+          path: src/Config/DependencyInjection.php
+includes:
+	- /home/app/.composer/vendor/phpstan/phpstan-beberlei-assert/extension.neon
+	- /home/app/.composer/vendor/phpstan/phpstan-phpunit/extension.neon

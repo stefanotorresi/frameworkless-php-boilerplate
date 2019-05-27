@@ -1,0 +1,90 @@
+stages:
+  - build
+  - test
+  - deploy
+
+image:
+  name: docker/compose:1.24.0
+  entrypoint: [""]
+
+services:
+  - docker:18.09-dind
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  APP_IMAGE: $CI_REGISTRY_IMAGE
+  APP_DEV_IMAGE: ${CI_REGISTRY_IMAGE}/dev
+  APP_BASE_IMAGE: ${CI_REGISTRY_IMAGE}/base
+  HTTP_PROXY_IMAGE: ${CI_REGISTRY_IMAGE}/http-proxy
+
+
+### BUILD
+
+build:
+  stage: build
+  image: docker:18.09
+  before_script:
+    - docker info
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - apk add --no-cache parallel
+  script:
+    - "parallel docker pull ::: \
+        ${APP_BASE_IMAGE}:${CI_COMMIT_REF_SLUG} \
+        ${APP_DEV_IMAGE}:${CI_COMMIT_REF_SLUG} \
+        ${APP_IMAGE}:${CI_COMMIT_REF_SLUG} \
+        ${HTTP_PROXY_IMAGE}:${CI_COMMIT_REF_SLUG} \
+       || true"
+    - docker build . -t $APP_BASE_IMAGE:$CI_COMMIT_REF_SLUG --target base
+      --cache-from $APP_BASE_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker build . -t $APP_DEV_IMAGE:$CI_COMMIT_REF_SLUG --target dev
+      --cache-from $APP_BASE_IMAGE:$CI_COMMIT_REF_SLUG
+      --cache-from $APP_DEV_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker build . -t $APP_IMAGE:$CI_COMMIT_REF_SLUG
+      --cache-from $APP_BASE_IMAGE:$CI_COMMIT_REF_SLUG
+      --cache-from $APP_DEV_IMAGE:$CI_COMMIT_REF_SLUG
+      --cache-from $APP_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker build infra/nginx -t $HTTP_PROXY_IMAGE:$CI_COMMIT_REF_SLUG
+    - "parallel docker push ::: \
+        ${APP_IMAGE}:${CI_COMMIT_REF_SLUG} \
+        ${APP_DEV_IMAGE}:${CI_COMMIT_REF_SLUG} \
+        ${APP_BASE_IMAGE}:${CI_COMMIT_REF_SLUG} \
+        ${HTTP_PROXY_IMAGE}:${CI_COMMIT_REF_SLUG} \
+      "
+
+### TEST
+
+.template: &test
+  stage: test
+  before_script:
+    - cp infra/docker-compose.ci.override.yml docker-compose.override.yml
+    - cp .env.example .env
+
+    # we need to resort to yaml processing, because, well... yaml.
+    - apk add --no-cache curl
+    - curl -sSL https://github.com/mikefarah/yq/releases/download/2.2.1/yq_linux_amd64 -o /usr/local/bin/yq
+      && chmod +x /usr/local/bin/yq
+    - yq d -i docker-compose.yml services.app.volumes
+
+    - docker info
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+    - docker-compose config
+
+test:
+  <<: *test
+  script:
+    - docker-compose pull
+    - docker-compose up -d || (docker-compose ps && docker-compose logs app && exit 1)
+    - docker-compose exec -T app sh -c 'wait-for $DB_HOST:$DB_PORT -t 60 -- phpunit'
+
+coding style:
+  <<: *test
+  script:
+    - docker-compose pull app
+    - docker-compose run --rm --no-deps -T app php-cs-fixer fix -v --dry-run
+  allow_failure: true
+
+static analysis:
+  <<: *test
+  script:
+    - docker-compose pull app
+    - docker-compose run --rm --no-deps -T app phpstan analyse src test

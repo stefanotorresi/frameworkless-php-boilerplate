@@ -1,0 +1,5 @@
+/.env
+/var
+/vendor
+*.cache
+docker-compose.override.yml
