@@ -31,7 +31,7 @@ The resulting overall design is much simpler than a run-of-the-mill MVC framewor
 
 The storage backend is abstracted by a very simple DataMapper implementation built upon the native PDO extension.
 
-The API itself is specified with the OpenAPI 3.0 standard (see [recipes.openapi.yml](docs/recipes.openapi.yml)), and user readable docs are generated on the fly.
+The API itself is specified with the OpenAPI 3.0 standard (see [todos.openapi.yml](docs/todos.openapi.yml)), and user readable docs are generated on the fly.
 
 Additional features like HTTP authentication and content negotiation are implemented via middleware.
 

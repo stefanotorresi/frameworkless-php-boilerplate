@@ -17,11 +17,11 @@ class ToDoUpdate implements RouteHandler
     /**
      * @var ToDoDataMapper
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
-    public function __construct(ToDoDataMapper $recipeDataMapper)
+    public function __construct(ToDoDataMapper $todoDataMapper)
     {
-        $this->recipeDataMapper = $recipeDataMapper;
+        $this->todoDataMapper = $todoDataMapper;
     }
 
     /**
@@ -35,7 +35,7 @@ class ToDoUpdate implements RouteHandler
             throw new BadRequestException('Invalid UUID');
         }
 
-        $item = $this->recipeDataMapper->find($args['id']);
+        $item = $this->todoDataMapper->find($args['id']);
 
         if ($item === null) {
             throw new NotFoundException('Resource not found');
@@ -49,7 +49,7 @@ class ToDoUpdate implements RouteHandler
 
         $item->updateFromArray($requestBody);
 
-        $this->recipeDataMapper->update($item);
+        $this->todoDataMapper->update($item);
 
         return new JsonResponse($item, 200);
     }

@@ -21,12 +21,12 @@ class ToDoCreateUnitTest extends TestCase
     /**
      * @var ToDoDataMapper & MockObject
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
     protected function setUp(): void
     {
-        $this->recipeDataMapper = $this->createMock(ToDoDataMapper::class);
-        $this->SUT = new ToDoCreate($this->recipeDataMapper);
+        $this->todoDataMapper = $this->createMock(ToDoDataMapper::class);
+        $this->SUT = new ToDoCreate($this->todoDataMapper);
     }
 
     public function testSuccess(): void
@@ -38,7 +38,7 @@ class ToDoCreateUnitTest extends TestCase
         ];
         $request = (new ServerRequest())->withParsedBody($data);
 
-        $this->recipeDataMapper->expects(once())->method('insert');
+        $this->todoDataMapper->expects(once())->method('insert');
 
         $response = $this->SUT->__invoke($request, []);
 

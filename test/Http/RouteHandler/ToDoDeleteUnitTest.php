@@ -21,12 +21,12 @@ class ToDoDeleteUnitTest extends TestCase
     /**
      * @var ToDoDataMapper & MockObject
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
     protected function setUp(): void
     {
-        $this->recipeDataMapper = $this->createMock(ToDoDataMapper::class);
-        $this->SUT = new ToDoDelete($this->recipeDataMapper);
+        $this->todoDataMapper = $this->createMock(ToDoDataMapper::class);
+        $this->SUT = new ToDoDelete($this->todoDataMapper);
     }
 
     public function testSuccess(): void
@@ -35,13 +35,13 @@ class ToDoDeleteUnitTest extends TestCase
         $request = new ServerRequest();
         $args = ['id' => Uuid::NIL];
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->method('find')
             ->with($args['id'])
             ->willReturn($item)
         ;
 
-        $this->recipeDataMapper->expects(once())->method('delete')->with($args['id']);
+        $this->todoDataMapper->expects(once())->method('delete')->with($args['id']);
 
         $response = $this->SUT->__invoke($request, $args);
 
@@ -64,7 +64,7 @@ class ToDoDeleteUnitTest extends TestCase
         $request = new ServerRequest();
         $args = ['id' => Uuid::NIL];
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->method('find')
             ->with($args['id'])
             ->willReturn(null)

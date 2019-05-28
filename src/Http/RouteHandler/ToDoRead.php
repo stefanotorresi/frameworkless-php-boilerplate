@@ -15,11 +15,11 @@ class ToDoRead implements RouteHandler
     /**
      * @var ToDoDataMapper
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
-    public function __construct(ToDoDataMapper $recipeDataMapper)
+    public function __construct(ToDoDataMapper $todoDataMapper)
     {
-        $this->recipeDataMapper = $recipeDataMapper;
+        $this->todoDataMapper = $todoDataMapper;
     }
 
     /**
@@ -32,7 +32,7 @@ class ToDoRead implements RouteHandler
             throw new Http\Exception\BadRequestException('Invalid UUID');
         }
 
-        $item = $this->recipeDataMapper->find($args['id']);
+        $item = $this->todoDataMapper->find($args['id']);
 
         if ($item === null) {
             throw new Http\Exception\NotFoundException('Resource not found');

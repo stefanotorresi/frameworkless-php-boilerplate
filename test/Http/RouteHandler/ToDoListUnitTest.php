@@ -20,12 +20,12 @@ class ToDoListUnitTest extends TestCase
     /**
      * @var ToDoDataMapper & MockObject
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
     protected function setUp(): void
     {
-        $this->recipeDataMapper = $this->createMock(ToDoDataMapper::class);
-        $this->SUT = new ToDoList($this->recipeDataMapper);
+        $this->todoDataMapper = $this->createMock(ToDoDataMapper::class);
+        $this->SUT = new ToDoList($this->todoDataMapper);
     }
 
     public function testSuccess(): void
@@ -36,7 +36,7 @@ class ToDoListUnitTest extends TestCase
 
         $records = [ $item1, $item2 ];
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->expects(once())
             ->method('getAll')
             ->willReturn($records)
@@ -60,13 +60,13 @@ class ToDoListUnitTest extends TestCase
         ];
         $request = (new ServerRequest())->withQueryParams($query);
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->expects(once())
             ->method('getAll')
             ->with($query['search'], $query['page'], $query['pageSize'])
         ;
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->expects(once())
             ->method('countPages')
             ->with($query['search'], $query['pageSize'])

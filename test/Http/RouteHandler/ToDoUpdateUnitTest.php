@@ -23,12 +23,12 @@ class ToDoUpdateUnitTest extends TestCase
     /**
      * @var ToDoDataMapper & MockObject
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
     protected function setUp(): void
     {
-        $this->recipeDataMapper = $this->createMock(ToDoDataMapper::class);
-        $this->SUT = new ToDoUpdate($this->recipeDataMapper);
+        $this->todoDataMapper = $this->createMock(ToDoDataMapper::class);
+        $this->SUT = new ToDoUpdate($this->todoDataMapper);
     }
 
     public function testSuccess(): void
@@ -42,13 +42,13 @@ class ToDoUpdateUnitTest extends TestCase
         $request = (new ServerRequest())->withParsedBody($data);
         $args = ['id' => Uuid::NIL];
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->method('find')
             ->with($args['id'])
             ->willReturn($item)
         ;
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->expects(once())
             ->method('update')
             ->with($item)
@@ -80,7 +80,7 @@ class ToDoUpdateUnitTest extends TestCase
         $request = new ServerRequest();
         $args = ['id' => Uuid::NIL];
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->method('find')
             ->with($args['id'])
             ->willReturn(null)
@@ -97,7 +97,7 @@ class ToDoUpdateUnitTest extends TestCase
         $request = new ServerRequest();
         $args = ['id' => Uuid::NIL];
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->method('find')
             ->with($args['id'])
             ->willReturn($item)

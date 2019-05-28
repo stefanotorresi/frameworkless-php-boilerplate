@@ -22,12 +22,12 @@ class ToDoReadUnitTest extends TestCase
     /**
      * @var ToDoDataMapper & MockObject
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
     protected function setUp(): void
     {
-        $this->recipeDataMapper = $this->createMock(ToDoDataMapper::class);
-        $this->SUT = new ToDoRead($this->recipeDataMapper);
+        $this->todoDataMapper = $this->createMock(ToDoDataMapper::class);
+        $this->SUT = new ToDoRead($this->todoDataMapper);
     }
 
     public function testSuccess(): void
@@ -36,7 +36,7 @@ class ToDoReadUnitTest extends TestCase
         $request = new ServerRequest();
         $args = ['id' => Uuid::NIL];
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->method('find')
             ->with($args['id'])
             ->willReturn($item)
@@ -65,7 +65,7 @@ class ToDoReadUnitTest extends TestCase
         $request = new ServerRequest();
         $args = ['id' => Uuid::NIL];
 
-        $this->recipeDataMapper
+        $this->todoDataMapper
             ->method('find')
             ->with($args['id'])
             ->willReturn(null)

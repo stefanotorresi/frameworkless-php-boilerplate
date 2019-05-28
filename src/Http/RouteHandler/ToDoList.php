@@ -16,11 +16,11 @@ class ToDoList implements RouteHandler
     /**
      * @var ToDoDataMapper
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
-    public function __construct(ToDoDataMapper $recipeDataMapper)
+    public function __construct(ToDoDataMapper $todoDataMapper)
     {
-        $this->recipeDataMapper = $recipeDataMapper;
+        $this->todoDataMapper = $todoDataMapper;
     }
 
     /**
@@ -42,8 +42,8 @@ class ToDoList implements RouteHandler
             throw new BadRequestException(sprintf('Page size must be between 1 and %s', self::MAX_PAGE_SIZE));
         }
 
-        $totalPages = $this->recipeDataMapper->countPages($search, $pageSize);
-        $items      = $this->recipeDataMapper->getAll($search, $page, $pageSize);
+        $totalPages = $this->todoDataMapper->countPages($search, $pageSize);
+        $items      = $this->todoDataMapper->getAll($search, $page, $pageSize);
 
         $prev = $page > 1 ? min($page - 1, $totalPages) : null;
         $next = $page < $totalPages ? $page + 1 : null;

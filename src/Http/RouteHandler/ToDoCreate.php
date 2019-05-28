@@ -16,11 +16,11 @@ class ToDoCreate implements RouteHandler
     /**
      * @var ToDoDataMapper
      */
-    private $recipeDataMapper;
+    private $todoDataMapper;
 
-    public function __construct(ToDoDataMapper $recipeDataMapper)
+    public function __construct(ToDoDataMapper $todoDataMapper)
     {
-        $this->recipeDataMapper = $recipeDataMapper;
+        $this->todoDataMapper = $todoDataMapper;
     }
 
     /**
@@ -37,7 +37,7 @@ class ToDoCreate implements RouteHandler
 
         $item = ToDo::createFromArray($requestBody);
 
-        $this->recipeDataMapper->insert($item);
+        $this->todoDataMapper->insert($item);
 
         return new JsonResponse($item, 201);
     }
