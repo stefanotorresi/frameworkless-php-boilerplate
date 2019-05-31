@@ -10,7 +10,7 @@
 
 ## Design
 
-The project is a PHP framework-less web application based on [PSR-7](https://www.php-fig.org/psr/psr-7/), [PSR-11](https://www.php-fig.org/psr/psr-11/) and [PSR-15](https://www.php-fig.org/psr/psr-15/) standard interfaces (which I contributed to develop).
+The project is a PHP framework-less web application based on [PSR-7](https://www.php-fig.org/psr/psr-7/), [PSR-11](https://www.php-fig.org/psr/psr-11/) and [PSR-15](https://www.php-fig.org/psr/psr-15/) standard interfaces.
 
 The main third party libraries used as building blocks are:
 - [`zendframweork/zend-diactoros`](https://github.com/zendframework/zend-diactoros) for the PSR-7 HTTP messages;
