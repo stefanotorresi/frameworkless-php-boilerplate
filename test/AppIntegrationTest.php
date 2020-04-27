@@ -64,8 +64,6 @@ class AppIntegrationTest extends TestCase
                                    ->withHeader('accept', '*/*') ],
             [ $serverRequestFactory->createServerRequest('PATCH', '/todos/foo')
                                    ->withHeader('accept', '*/*') ],
-            [ $serverRequestFactory->createServerRequest('PATCH', '/todos/foo')
-                                   ->withHeader('accept', '*/*') ],
             [ $serverRequestFactory->createServerRequest('DELETE', '/todos/foo')
                                    ->withHeader('accept', '*/*') ],
         ];

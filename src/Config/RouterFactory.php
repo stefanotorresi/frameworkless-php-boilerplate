@@ -36,7 +36,6 @@ class RouterFactory
             $route->map('GET', '/', RouteHandler\ToDoList::class);
             $route->map('POST', '/', RouteHandler\ToDoCreate::class)->middleware($authMiddleware);
             $route->map('GET', '/{id}', RouteHandler\ToDoRead::class);
-            $route->map('PUT', '/{id}', RouteHandler\ToDoUpdate::class)->middleware($authMiddleware);
             $route->map('PATCH', '/{id}', RouteHandler\ToDoUpdate::class)->middleware($authMiddleware);
             $route->map('DELETE', '/{id}', RouteHandler\ToDoDelete::class)->middleware($authMiddleware);
         });

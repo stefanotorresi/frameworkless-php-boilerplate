@@ -50,27 +50,9 @@ paths:
           $ref: '#/components/responses/NotFound'
         '400':
           $ref: '#/components/responses/BadRequest'
-    put:
-      tags: [ ToDos ]
-      summary: Update a ToDo
-      operationId: putToDo
-      requestBody:
-        $ref: '#/components/requestBodies/ToDo'
-      responses:
-        '200':
-          $ref: '#/components/responses/ToDo'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-      security:
-        - basicAuth: []
     patch:
       tags: [ ToDos ]
       summary: Update a ToDo
-      description: "Note: this is fuctionally identical to the PUT operation"
       operationId: patchToDo
       requestBody:
         $ref: '#/components/requestBodies/ToDo'
@@ -100,22 +82,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
       security:
         - basicAuth: []
-  /todos/{id}/mark-done:
-    parameters:
-      - $ref: '#/components/parameters/id'
-    post:
-      tags: [ ToDos ]
-      summary: Mark a ToDo as done
-      operationId: markToDoDone
-      requestBody:
-        $ref: '#/components/requestBodies/ToDoRating'
-      responses:
-        '201':
-          $ref: '#/components/responses/ToDo'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '400':
-          $ref: '#/components/responses/BadRequest'
 
 components:
   schemas:
@@ -125,42 +91,28 @@ components:
           type: string
           readOnly: true
           example: "fd1a8610-8aa2-485c-880a-90e43ec189c3"
+        createdAt:
+          type: string
+          readOnly: true
+          example: "4020-04-20T16:20:00.000000+0000"
+          format: date-time
         name:
           type: string
-          example: "Spaghetti all'Amatriciana"
-        prepTimeMins:
-          type: integer
-          minimum: 1
-          example: 10
-        difficulty:
-          type: integer
-          minimum: 1
-          maximum: 3
-          example: 1
-        vegetarian:
-          type: boolean
-          example: false
-        ratings:
-          type: array
-          items:
-            type: integer
+          example: "Pay the bills"
+        dueFor:
+          type: string
+          example: "4020-04-20T16:20:00.000000+0000"
+          format: date-time
+        doneAt:
+          type: string
+          example: "4020-04-20T16:20:00.000000+0000"
+          format: date-time
+        isDone:
+          type: bool
           readOnly: true
-          example: [ 1, 3 ]
       required:
         - id
         - name
-        - prepTimeMins
-        - difficulty
-        - vegetarian
-    ToDoRating:
-      properties:
-        value:
-          type: integer
-          minimum: 1
-          maximum: 5
-          example: 3
-      required:
-        - value
     GenericError:
       properties:
         error:
@@ -266,7 +218,7 @@ components:
       in: query
       schema:
         type: string
-        example: 'Easy spaghetti'
+        example: 'pay'
       description: Full text search phrase
     page:
       name: page
