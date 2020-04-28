@@ -10,8 +10,9 @@ use League\Route\Http\Exception\NotFoundException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequest;
+use const Acme\ToDo\DATE_FORMAT;
 
 class ToDoUpdateUnitTest extends TestCase
 {
@@ -36,8 +37,8 @@ class ToDoUpdateUnitTest extends TestCase
         $item = new ToDo('foo');
         $data = [
             'name' => 'bar',
-            'dueFor' => (new DateTimeImmutable())->format(ToDo::DATE_FORMAT),
-            'doneAt' => (new DateTimeImmutable())->format(ToDo::DATE_FORMAT),
+            'dueFor' => (new DateTimeImmutable())->format(DATE_FORMAT),
+            'doneAt' => (new DateTimeImmutable())->format(DATE_FORMAT),
         ];
         $request = (new ServerRequest())->withParsedBody($data);
         $args = ['id' => Uuid::NIL];

@@ -6,7 +6,7 @@ use Assert\InvalidArgumentException;
 use Assert\LazyAssertionException;
 use Exception;
 
-class InvalidDataException extends Exception
+final class InvalidDataException extends Exception
 {
     /**
      * @var string[]

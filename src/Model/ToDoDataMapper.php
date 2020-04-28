@@ -205,6 +205,10 @@ class ToDoDataMapper
         $this->pdo->exec(sprintf('DROP TABLE IF EXISTS "%s";', 'todos'));
     }
 
+    /**
+     * @param ToDo $item
+     * @param PDOStatement<mixed> $stmt
+     */
     private function bindParams(ToDo $item, PDOStatement $stmt): void
     {
         $stmt->bindValue('id', $item->getId());
@@ -232,6 +236,9 @@ class ToDoDataMapper
         ;
     }
 
+    /**
+     * @param string[] $row
+     */
     private function createToDoFromRow(array $row): ToDo
     {
         return ToDo::createFromArray($row)->withId($row['id'])->withCreatedAt($row['createdAt']);

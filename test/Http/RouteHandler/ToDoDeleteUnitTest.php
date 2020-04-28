@@ -9,7 +9,7 @@ use League\Route\Http\Exception\NotFoundException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequest;
 
 class ToDoDeleteUnitTest extends TestCase
 {

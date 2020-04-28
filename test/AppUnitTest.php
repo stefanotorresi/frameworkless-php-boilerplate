@@ -8,8 +8,8 @@ use League\Route\Http\Exception as HttpException;
 use League\Route\Router;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequest;
 
 class AppUnitTest extends TestCase
 {
@@ -50,6 +50,9 @@ class AppUnitTest extends TestCase
         assertEquals(exception_to_array($exception), $payload['error']);
     }
 
+    /**
+     * @return array[]
+     */
     public function exceptionProvider(): array
     {
         return [

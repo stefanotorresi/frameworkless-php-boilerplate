@@ -9,7 +9,7 @@ use Acme\ToDo\Model\ToDoDataMapper;
 use League\Route\Http\Exception\BadRequestException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\Response\JsonResponse;
 
 class ToDoCreate implements RouteHandler
 {
@@ -24,6 +24,11 @@ class ToDoCreate implements RouteHandler
     }
 
     /**
+     * @param Request $request
+     * @param string[] $args
+     *
+     * @return Response
+     *
      * @throws BadRequestException
      * @throws InvalidDataException
      */

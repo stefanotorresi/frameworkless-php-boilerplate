@@ -2,6 +2,7 @@
 
 namespace Acme\ToDo;
 
+use Assert\Assert;
 use DateTimeImmutable;
 use ErrorException;
 use Acme\ToDo\Model\InvalidDataException;
@@ -10,6 +11,9 @@ use Lcobucci\Clock\SystemClock;
 use Psr\Log\LoggerInterface as Logger;
 use Throwable;
 
+/**
+ * @return mixed[]
+ */
 function exception_to_array(Throwable $exception): array
 {
     $singleToArray = function (Throwable $exception) {
@@ -83,3 +87,14 @@ function now(Clock $newClock = null): DateTimeImmutable
 
     return $clock->now();
 }
+
+function datetime_from_string(string $dateTime): DateTimeImmutable
+{
+    $dateTime = DateTimeImmutable::createFromFormat(DATE_FORMAT, $dateTime);
+
+    Assert::that($dateTime)->notSame(false);
+
+    return $dateTime;
+}
+
+const DATE_FORMAT = "Y-m-d\TH:i:s.uO"; // ISO8601 with milliseconds

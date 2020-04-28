@@ -10,7 +10,7 @@ use League\Route\Http\Exception\NotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Ramsey\Uuid\Uuid;
-use Zend\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\Response\JsonResponse;
 
 class ToDoUpdate implements RouteHandler
 {
@@ -25,6 +25,11 @@ class ToDoUpdate implements RouteHandler
     }
 
     /**
+     * @param Request $request
+     * @param string[] $args
+     *
+     * @return Response
+     *
      * @throws BadRequestException
      * @throws InvalidDataException
      * @throws NotFoundException

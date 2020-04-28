@@ -5,7 +5,7 @@ namespace Acme\ToDo;
 use Env;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\ServerRequestFactory;
 
 class AppIntegrationTest extends TestCase
 {
@@ -55,6 +55,9 @@ class AppIntegrationTest extends TestCase
         assertNotSame(401, $response->getStatusCode());
     }
 
+    /**
+     * @return array[]
+     */
     public function authRequiredRequestProvider(): array
     {
         $serverRequestFactory = new ServerRequestFactory();

@@ -7,8 +7,8 @@ use Acme\ToDo\Model\ToDoDataMapper;
 use League\Route\Http\Exception\BadRequestException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequest;
 
 class ToDoListUnitTest extends TestCase
 {

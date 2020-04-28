@@ -8,7 +8,7 @@ use Acme\ToDo\Model\ToDoDataMapper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Ramsey\Uuid\Uuid;
-use Zend\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\Response\JsonResponse;
 
 class ToDoRead implements RouteHandler
 {
@@ -23,6 +23,11 @@ class ToDoRead implements RouteHandler
     }
 
     /**
+     * @param Request $request
+     * @param string[] $args
+     *
+     * @return Response
+     *
      * @throws Http\Exception\BadRequestException
      * @throws Http\Exception\NotFoundException
      */

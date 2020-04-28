@@ -8,8 +8,9 @@ use DateTimeImmutable;
 use League\Route\Http\Exception\BadRequestException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequest;
+use const Acme\ToDo\DATE_FORMAT;
 
 class ToDoCreateUnitTest extends TestCase
 {
@@ -33,8 +34,8 @@ class ToDoCreateUnitTest extends TestCase
     {
         $data = [
             'name' => 'foo',
-            'dueFor' => (new DateTimeImmutable())->format(ToDo::DATE_FORMAT),
-            'doneAt' => (new DateTimeImmutable())->format(ToDo::DATE_FORMAT),
+            'dueFor' => (new DateTimeImmutable())->format(DATE_FORMAT),
+            'doneAt' => (new DateTimeImmutable())->format(DATE_FORMAT),
         ];
         $request = (new ServerRequest())->withParsedBody($data);
 

@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Lcobucci\Clock\FrozenClock;
 use Lcobucci\Clock\SystemClock;
 use PHPUnit\Framework\TestCase;
+use const Acme\ToDo\DATE_FORMAT;
 
 class ToDoUnitTest extends TestCase
 {
@@ -26,6 +27,11 @@ class ToDoUnitTest extends TestCase
 
     /**
      * @dataProvider typeSafeInvalidDataProvider
+     *
+     * @param mixed $name
+     * @param mixed $dueFor
+     * @param mixed $doneAt
+     * @param string[] $invalidProperties
      */
     public function testValidation($name, $dueFor, $doneAt, array $invalidProperties): void
     {
@@ -40,6 +46,11 @@ class ToDoUnitTest extends TestCase
 
     /**
      * @dataProvider invalidDataProvider
+     *
+     * @param mixed $name
+     * @param mixed $dueFor
+     * @param mixed $doneAt
+     * @param string[] $invalidProperties
      */
     public function testValidationFromArray($name, $dueFor, $doneAt, array $invalidProperties): void
     {
@@ -54,6 +65,11 @@ class ToDoUnitTest extends TestCase
 
     /**
      * @dataProvider invalidDataProvider
+     *
+     * @param mixed $name
+     * @param mixed $dueFor
+     * @param mixed $doneAt
+     * @param string[] $invalidProperties
      */
     public function testValidationOnUpdate($name, $dueFor, $doneAt, array $invalidProperties): void
     {
@@ -68,6 +84,9 @@ class ToDoUnitTest extends TestCase
         assertEquals($invalidProperties, array_keys($e->getDetails()), 'Expected invalid properties don\'t match');
     }
 
+    /**
+     * @return array[]
+     */
     public function invalidDataProvider(): array
     {
         return [
@@ -80,6 +99,9 @@ class ToDoUnitTest extends TestCase
         ];
     }
 
+    /**
+     * @return array[]
+     */
     public function typeSafeInvalidDataProvider(): array
     {
         return [
@@ -102,6 +124,6 @@ class ToDoUnitTest extends TestCase
 
     private function createDateTimeString(int $timestamp = 0): string
     {
-        return (new DateTimeImmutable("@$timestamp"))->format(ToDo::DATE_FORMAT);
+        return (new DateTimeImmutable("@$timestamp"))->format(DATE_FORMAT);
     }
 }

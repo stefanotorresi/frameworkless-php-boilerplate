@@ -2,44 +2,28 @@
 
 namespace Acme\ToDo\Model;
 
+use function Acme\ToDo\datetime_from_string;
 use function Acme\ToDo\now;
 use Assert\Assert;
-use Assert\InvalidArgumentException;
 use Assert\LazyAssertionException;
 use DateTimeImmutable;
 use Doctrine\Instantiator\Instantiator;
 use JsonSerializable;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use const Acme\ToDo\DATE_FORMAT;
 
 class ToDo implements JsonSerializable
 {
-    public const DATE_FORMAT = "Y-m-d\TH:i:s.uO"; // ISO8601 with milliseconds
+    private UuidInterface $id;
 
-    /**
-     * @var UuidInterface
-     */
-    private $id;
+    private string $name;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private DateTimeImmutable $createdAt;
 
-    /**
-     * @var DateTimeImmutable
-     */
-    private $createdAt;
+    private ?DateTimeImmutable $dueFor;
 
-    /**
-     * @var DateTimeImmutable|null
-     */
-    private $dueFor;
-
-    /**
-     * @var DateTimeImmutable|null
-     */
-    private $doneAt;
+    private ?DateTimeImmutable $doneAt;
 
     /**
      * @throws InvalidDataException
@@ -47,12 +31,13 @@ class ToDo implements JsonSerializable
     public function __construct(string $name, DateTimeImmutable $dueFor = null, DateTimeImmutable $doneAt = null)
     {
         $this->id        = Uuid::uuid4();
-        $this->name      = $name;
         $this->createdAt = now();
+
+        $this->validate(compact('name'));
+
+        $this->name      = $name;
         $this->dueFor    = $dueFor;
         $this->doneAt    = $doneAt;
-
-        $this->validate();
     }
 
     public function getId(): string
@@ -64,7 +49,6 @@ class ToDo implements JsonSerializable
     {
         $new = clone $this;
         $new->id = Uuid::fromString($id);
-        $new->validate();
 
         return $new;
     }
@@ -72,8 +56,7 @@ class ToDo implements JsonSerializable
     public function withCreatedAt(string $createdAt): self
     {
         $new = clone $this;
-        $new->createdAt = DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $createdAt);
-        $new->validate();
+        $new->createdAt = datetime_from_string($createdAt);
 
         return $new;
     }
@@ -90,7 +73,7 @@ class ToDo implements JsonSerializable
 
     public function getCreatedAtAsString(): string
     {
-        return $this->createdAt->format(self::DATE_FORMAT);
+        return $this->createdAt->format(DATE_FORMAT);
     }
 
     public function getDueFor(): ?DateTimeImmutable
@@ -100,7 +83,7 @@ class ToDo implements JsonSerializable
 
     public function getDueForAsString(): string
     {
-        return $this->dueFor ? $this->dueFor->format(self::DATE_FORMAT) : '';
+        return $this->dueFor ? $this->dueFor->format(DATE_FORMAT) : '';
     }
 
     public function markDone(): void
@@ -115,7 +98,7 @@ class ToDo implements JsonSerializable
 
     public function getDoneAtAsString(): string
     {
-        return $this->doneAt ? $this->doneAt->format(self::DATE_FORMAT): '';
+        return $this->doneAt ? $this->doneAt->format(DATE_FORMAT): '';
     }
 
     public function isDone(): bool
@@ -123,7 +106,10 @@ class ToDo implements JsonSerializable
         return $this->doneAt !== null;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return mixed[]
+     */
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->getId(),
@@ -138,56 +124,67 @@ class ToDo implements JsonSerializable
     /**
      * This method is intended as a type-unsafe alternative to the constructor
      *
+     * @param mixed[] $data
+     *
      * @throws InvalidDataException
      */
     public static function createFromArray(array $data): self
     {
         /**
          * we use this to avoid double validation.
-         * @var $new self
+         * @var self $new
          */
         $new = (new Instantiator)->instantiate(__CLASS__);
 
         $new->id = Uuid::uuid4();
         $new->createdAt = now();
+        $new->dueFor = null;
+        $new->doneAt = null;
         $new->updateFromArray($data);
 
         return $new;
     }
 
     /**
+     * @param mixed[] $data
      * @throws InvalidDataException
      */
     public function updateFromArray(array $data): void
     {
-        $this->name = $data['name'] ?? $this->name;
-        $this->dueFor = isset($data['dueFor']) ?
-            DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $data['dueFor']) :
-            $this->dueFor;
-        $this->doneAt = isset($data['doneAt']) ?
-            DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $data['doneAt']) :
-            $this->doneAt;
+        $this->validate($data);
 
-        $this->validate();
+        $this->name = $data['name'] ?? $this->name;
+        $this->dueFor = isset($data['dueFor']) ? datetime_from_string($data['dueFor']) : $this->dueFor;
+        $this->doneAt = isset($data['doneAt']) ? datetime_from_string($data['doneAt']) : $this->doneAt;
     }
 
     /**
+     * @param mixed[] $data
+     *
      * @throws InvalidDataException
      */
-    private function validate(): void
+    private function validate(array $data): void
     {
-        $assert = Assert::lazy()
-              ->tryAll()
-              ->that($this->id, 'id')->isInstanceOf(Uuid::class)
-              ->that($this->name, 'name')->string()->notBlank()
-              ->that($this->createdAt, 'createdAt')->isInstanceOf(DateTimeImmutable::class, 'Invalid date format')
-              ->that($this->dueFor, 'dueFor')->nullOr()->isInstanceOf(DateTimeImmutable::class, 'Invalid date format')
-              ->that($this->doneAt, 'doneAt')->nullOr()->isInstanceOf(DateTimeImmutable::class, 'Invalid date format')
-        ;
+        $assert = Assert::lazy()->tryAll();
+
+        if (isset($data['name'])) {
+            $assert->that($data['name'], 'name')->string()->notBlank();
+        }
+
+        if (isset($data['dueFor'])) {
+            $assert->that($data['dueFor'], 'dueFor')->nullOr()->date(DATE_FORMAT);
+        }
+
+        if (isset($data['doneAt'])) {
+            $assert->that($data['doneAt'], 'doneAt')->nullOr()->date(DATE_FORMAT);
+        }
+
         try {
             $assert->verifyNow();
         } catch (LazyAssertionException $e) {
             throw InvalidDataException::fromLazyAssertionException($e);
         }
     }
+
+
 }
