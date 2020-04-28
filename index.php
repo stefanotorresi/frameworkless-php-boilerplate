@@ -3,9 +3,9 @@
 namespace Acme\ToDo;
 
 use Throwable;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\HttpHandlerRunner\Emitter\SapiStreamEmitter;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiStreamEmitter;
 
 (static function (): void {
     require __DIR__ . '/vendor/autoload.php';
