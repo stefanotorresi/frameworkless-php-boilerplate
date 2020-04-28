@@ -90,9 +90,9 @@ class ToDoDataMapper
             SELECT 
                 "id", 
                 "name", 
-                to_char("createdAt", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "createdAt", 
-                to_char("dueFor", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "dueFor", 
-                to_char("doneAt", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "doneAt"
+                to_char("createdAt", 'YYYY-MM-DD"T"HH24:MI:SS.USTZHTZM') as "createdAt", 
+                to_char("dueFor", 'YYYY-MM-DD"T"HH24:MI:SS.USTZHTZM') as "dueFor", 
+                to_char("doneAt", 'YYYY-MM-DD"T"HH24:MI:SS.USTZHTZM') as "doneAt"
             FROM "todos" 
             {$where}
             ORDER BY "createdAt" LIMIT ${limit} OFFSET ${offset};
@@ -163,9 +163,9 @@ class ToDoDataMapper
             SELECT 
                 "id", 
                 "name", 
-                to_char("createdAt", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "createdAt", 
-                to_char("dueFor", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "dueFor", 
-                to_char("doneAt", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "doneAt"
+                to_char("createdAt", 'YYYY-MM-DD"T"HH24:MI:SS.USTZHTZM') as "createdAt", 
+                to_char("dueFor", 'YYYY-MM-DD"T"HH24:MI:SS.USTZHTZM') as "dueFor", 
+                to_char("doneAt", 'YYYY-MM-DD"T"HH24:MI:SS.USTZHTZM') as "doneAt"
             FROM "todos" 
             WHERE "id" = :id;
             SQL
