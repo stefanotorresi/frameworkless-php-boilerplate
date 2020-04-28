@@ -12,8 +12,6 @@ class ToDoDataMapper
 {
     public const DEFAULT_PAGE_SIZE = 20;
 
-    private const TABLE_NAME = 'todos';
-
     /**
      * @var PDO
      */
@@ -26,11 +24,9 @@ class ToDoDataMapper
 
     public function insert(ToDo $item): void
     {
-        $tableName = static::TABLE_NAME;
-
         $stmt = $this->pdo->prepare(
             <<<SQL
-            INSERT INTO "$tableName" 
+            INSERT INTO todos 
                 ("id", "name", "createdAt", "dueFor", "doneAt", "searchVector") 
             VALUES (
                 :id, 
@@ -54,11 +50,9 @@ class ToDoDataMapper
 
     public function update(ToDo $item): void
     {
-        $tableName = static::TABLE_NAME;
-
         $stmt = $this->pdo->prepare(
             <<<SQL
-            UPDATE "$tableName" 
+            UPDATE "todos" 
             SET 
                 "name"          = :name, 
                 "createdAt"     = :createdAt, 
@@ -85,8 +79,6 @@ class ToDoDataMapper
     {
         Assert::that($page)->greaterThan(0);
         Assert::that($pageSize)->greaterThan(0);
-        $tableName = static::TABLE_NAME;
-
         $isSearch = $search !== '';
         $where = $isSearch ? 'WHERE "searchVector" @@ plainto_tsquery(:search_query)' : '';
 
@@ -101,7 +93,7 @@ class ToDoDataMapper
                 to_char("createdAt", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "createdAt", 
                 to_char("dueFor", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "dueFor", 
                 to_char("doneAt", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "doneAt"
-            FROM "$tableName" 
+            FROM "todos" 
             {$where}
             ORDER BY "createdAt" LIMIT ${limit} OFFSET ${offset};
             SQL
@@ -132,14 +124,12 @@ class ToDoDataMapper
     {
         Assert::that($pageSize)->greaterThan(0);
 
-        $tableName = static::TABLE_NAME;
-
         $isSearch = $search !== '';
         $where = $isSearch ? 'WHERE "searchVector" @@ plainto_tsquery(:search_query)' : '';
 
         $stmt = $this->pdo->prepare(
             <<<SQL
-            SELECT COUNT(*) FROM "$tableName" {$where}
+            SELECT COUNT(*) FROM "todos" {$where}
             SQL
         );
 
@@ -168,8 +158,6 @@ class ToDoDataMapper
 
     public function find(string $id): ?ToDo
     {
-        $tableName = static::TABLE_NAME;
-
         $stmt = $this->pdo->prepare(
             <<<SQL
             SELECT 
@@ -178,7 +166,7 @@ class ToDoDataMapper
                 to_char("createdAt", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "createdAt", 
                 to_char("dueFor", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "dueFor", 
                 to_char("doneAt", 'YYYY-MM-DD"T"HH24:MI:SS.USOF') as "doneAt"
-            FROM "$tableName" 
+            FROM "todos" 
             WHERE "id" = :id;
             SQL
         );
@@ -199,7 +187,7 @@ class ToDoDataMapper
 
     public function delete(string $id): void
     {
-        $stmt = $this->pdo->prepare(sprintf('DELETE FROM "%s" WHERE "id" = :id;', static::TABLE_NAME));
+        $stmt = $this->pdo->prepare('DELETE FROM "todos" WHERE "id" = :id;');
         $result = $stmt->execute(compact('id'));
 
         if ($result === false) {
@@ -214,7 +202,7 @@ class ToDoDataMapper
 
     public function dropSchema(): void
     {
-        $this->pdo->exec(sprintf('DROP TABLE IF EXISTS "%s";', static::TABLE_NAME));
+        $this->pdo->exec(sprintf('DROP TABLE IF EXISTS "%s";', 'todos'));
     }
 
     private function bindParams(ToDo $item, PDOStatement $stmt): void
@@ -229,10 +217,8 @@ class ToDoDataMapper
 
     private static function getSchema(): string
     {
-        $tableName = static::TABLE_NAME;
-
         return <<<SQL
-            CREATE TABLE IF NOT EXISTS "$tableName" (
+            CREATE TABLE IF NOT EXISTS "todos" (
                 "id" UUID NOT NULL,
                 "name" TEXT NOT NULL,
                 "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -241,7 +227,7 @@ class ToDoDataMapper
                 "searchVector" TSVECTOR NOT NULL,
                 PRIMARY KEY (id)
             );
-            CREATE INDEX "searchIdx" ON "$tableName" USING gin("searchVector");
+            CREATE INDEX "searchIdx" ON "todos" USING gin("searchVector");
             SQL
         ;
     }
