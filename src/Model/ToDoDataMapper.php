@@ -39,7 +39,7 @@ class ToDoDataMapper
             SQL
         );
 
-        $this->bindParams($item, $stmt);
+        static::bindParams($item, $stmt);
 
         $result = $stmt->execute();
 
@@ -63,7 +63,7 @@ class ToDoDataMapper
             SQL
         );
 
-        $this->bindParams($item, $stmt);
+        static::bindParams($item, $stmt);
 
         $result = $stmt->execute();
 
@@ -209,7 +209,7 @@ class ToDoDataMapper
      * @param ToDo $item
      * @param PDOStatement<mixed> $stmt
      */
-    private function bindParams(ToDo $item, PDOStatement $stmt): void
+    private static function bindParams(ToDo $item, PDOStatement $stmt): void
     {
         $stmt->bindValue('id', $item->getId());
         $stmt->bindValue('name', $item->getName());
